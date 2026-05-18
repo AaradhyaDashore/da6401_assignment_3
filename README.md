@@ -1,9 +1,9 @@
 # DA6401 - Assignment 3: Implementing the Transformer for Machine Translation
 
-Name: Aaradhya Dashore
-Roll No: ME22B089
-Wandb report: https://api.wandb.ai/links/aaradhyadashore784-iit-madras/ocxxuo9q
-Github Link: https://github.com/AaradhyaDashore/da6401_assignment_3
+Name: Aaradhya Dashore <br>
+Roll No: ME22B089 <br>
+Wandb report: https://api.wandb.ai/links/aaradhyadashore784-iit-madras/ocxxuo9q <br>
+Github Link: https://github.com/AaradhyaDashore/da6401_assignment_3 <br>
 
 ## Overview
 
