@@ -1,0 +1,14 @@
+# Compiled Python files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyTorch Model Weights
+*.pt
+*.pth
+checkpoint.pt
+
+# Provided Assignment Files & Excluded Scripts
+DA6401_Assignment_3_2026.pdf
+*.pdf
+bleu.py
