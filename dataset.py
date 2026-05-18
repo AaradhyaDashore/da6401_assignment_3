@@ -1,4 +1,5 @@
 import spacy
+import spacy.cli
 from datasets import load_dataset
 from collections import Counter
 from typing import List, Tuple, Dict
@@ -18,7 +19,6 @@ class Multi30kDataset:
         try:
             self.spacy_de = spacy.load("de_core_news_sm")
         except OSError:
-            import spacy.cli
             spacy.cli.download("de_core_news_sm")
             self.spacy_de = spacy.load("de_core_news_sm")
 
