@@ -25,7 +25,6 @@ class Multi30kDataset:
         try:
             self.spacy_en = spacy.load("en_core_web_sm")
         except OSError:
-            import spacy.cli
             spacy.cli.download("en_core_web_sm")
             self.spacy_en = spacy.load("en_core_web_sm")
 
