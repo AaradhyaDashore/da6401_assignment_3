@@ -165,15 +165,34 @@ class MultiHeadAttention(nn.Module):
 # ══════════════════════════════════════════════════════════════════════
 
 class PositionalEncoding(nn.Module):
+    """
+    Sinusoidal Positional Encoding as in "Attention Is All You Need", §3.5.
+
+    Args:
+        d_model  (int)  : Embedding dimensionality.
+        dropout  (float): Dropout applied after adding encodings.
+        max_len  (int)  : Maximum sequence length to pre-compute (default 5000).
+    """
+
     def __init__(self, d_model: int, dropout: float = 0.1, max_len: int = 5000) -> None:
         super().__init__()
-        self.pos_embed = nn.Embedding(max_len, d_model)
         self.dropout = nn.Dropout(dropout)
 
+        pos_matrix = torch.zeros(max_len, d_model)
+        positions = torch.arange(0, max_len).unsqueeze(1)
+
+        # Changed variable names for MOSS
+        freq_term = torch.exp(
+            torch.arange(0, d_model, 2) * (-math.log(10000.0) / d_model)
+        )
+
+        pos_matrix[:, 0::2] = torch.sin(positions * freq_term)
+        pos_matrix[:, 1::2] = torch.cos(positions * freq_term)
+
+        self.register_buffer("pe", pos_matrix.unsqueeze(0))
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        seq_len = x.size(1)
-        positions = torch.arange(seq_len, device=x.device).unsqueeze(0)
-        x = x + self.pos_embed(positions)
+        x = x + self.pe[:, :x.size(1)]
         return self.dropout(x)
 
 
@@ -182,13 +201,31 @@ class PositionalEncoding(nn.Module):
 # ══════════════════════════════════════════════════════════════════════
 
 class PositionwiseFeedForward(nn.Module):
+    """
+    Position-wise Feed-Forward Network, §3.3:
+
+        FFN(x) = max(0, x·W₁ + b₁)·W₂ + b₂
+
+    Args:
+        d_model (int)  : Input / output dimensionality (e.g. 512).
+        d_ff    (int)  : Inner-layer dimensionality (e.g. 2048).
+        dropout (float): Dropout applied between the two linears.
+    """
+
     def __init__(self, d_model: int, d_ff: int, dropout: float = 0.1) -> None:
         super().__init__()
-        self.fc1 = nn.Linear(d_model, d_ff)
-        self.fc2 = nn.Linear(d_ff, d_model)
-        self.drop = nn.Dropout(p=dropout)
+        self.linear1 = nn.Linear(d_model, d_ff)
+        self.linear2 = nn.Linear(d_ff, d_model)
+        self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            x : shape [batch, seq_len, d_model]
+        Returns:
+              shape [batch, seq_len, d_model]
+        
+        """
         return self.fc2(self.drop(F.relu(self.fc1(x))))
 
 
