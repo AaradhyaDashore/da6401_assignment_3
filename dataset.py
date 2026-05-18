@@ -15,8 +15,19 @@ class Multi30kDataset:
         self.dataset = hf_data[split]
         
         # Loading tokenizers
-        self.spacy_de = spacy.load("de_core_news_sm")
-        self.spacy_en = spacy.load("en_core_web_sm")
+        try:
+            self.spacy_de = spacy.load("de_core_news_sm")
+        except OSError:
+            import spacy.cli
+            spacy.cli.download("de_core_news_sm")
+            self.spacy_de = spacy.load("de_core_news_sm")
+
+        try:
+            self.spacy_en = spacy.load("en_core_web_sm")
+        except OSError:
+            import spacy.cli
+            spacy.cli.download("en_core_web_sm")
+            self.spacy_en = spacy.load("en_core_web_sm")
 
         # Standard tokens configuration
         self.pad_str = "<pad>"
